@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../services/api";
 import { Container, List } from "./styles";
 
 export function Main () {
+
+  
   const [productName, setProductName] = useState('');
   const [productPrice, setPrice] = useState<number>(0);
-  
   const [ products, setProducts ] = useState<IProducts[]>([]);
+  
+  useEffect(() => {
+    api.get('').then((response) => {
+      console.log(response.data);
+      const apiProducts: IProducts[] = response.data.map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+      }));
+      setProducts(apiProducts);
+    }).catch((error) => {
+      console.log(error);
+    })
+  }, [])
   
 interface IProducts {
   id?: number;
@@ -29,6 +45,7 @@ interface IProducts {
 
   return (
     <>
+    
     <Container>
       <form onSubmit={handleSubmit}>
         <input 
@@ -48,6 +65,7 @@ interface IProducts {
     <th>DISPONIBILIDADE</th>
     <th>PREÇO</th>
   </tr>
+
 
   {products.map((product) => <tr>
     <td>{product.name}</td>
