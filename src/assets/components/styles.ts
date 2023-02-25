@@ -13,7 +13,7 @@ background: var(--color-secondary);
 export const List = styled.div`
 width: 80%;
 height: 200px;
-background: black;
+background: none;
 
   h1{
     text-align: center;
