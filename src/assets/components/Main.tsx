@@ -24,34 +24,7 @@ export function Main() {
     }).catch((error) => {
       console.log(error);
     })
-  }, []);
-
-  const data =
-  {
-    "id": 0,
-    "categoryId": 0,
-    "description": "string",
-    "icmsTax": 0,
-    "ipiTax": 0,
-    "isAvailable": true,
-    "isWarehouse": true,
-    "minPuchaseQuantity": 0,
-    "name": "string",
-    "productCategory": {
-      "id": 0,
-      "allowAttachments": true,
-      "allowQuantityVariation": true,
-      "description": "string",
-      "hasShipping": true,
-      "limitRequest": 0,
-      "limitRequestsPerMonth": true,
-      "name": products,
-      "validateClient": true,
-      "valueVariation": 0,
-      "allowValueVariation": true
-    }
-  }
-  // api.post('', data) 
+  }, []); 
   interface IProducts {
     id?: number;
     name: string;
@@ -94,16 +67,37 @@ export function Main() {
       name: productName,
       price: productPrice,
     };
+    
+    const data = {
+      "id": 0,
+      "categoryId": 0,
+      "description": "string",
+      "icmsTax": 0,
+      "ipiTax": 0,
+      "isAvailable": true,
+      "isWarehouse": true,
+      "minPuchaseQuantity": 0,
+      "name": newProduct.name,
+      "productCategory": {
+        "id": 0,
+        "allowAttachments": true,
+        "allowQuantityVariation": true,
+        "description": "string",
+        "hasShipping": true,
+        "limitRequest": 0,
+        "limitRequestsPerMonth": true,
+        "name": "string",
+        "validateClient": true,
+        "valueVariation": 0,
+        "allowValueVariation": true
+      }
+    }
 
-    api.post('', newProduct)
-      .then((response) => {
-        const createdProduct: IProducts = {
-          id: response.data.id,
-          name: response.data.name,
-          price: response.data.price,
-          minPurchase: response.data.minPurchaseQuantity,
-        };
-        setProducts([...products, createdProduct])
+    const apiPost = api.post('', data)
+      apiPost.then((response) => {
+        console.log(response);
+
+        setProducts([...products, newProduct])
         setProductName('');
         setProductPrice(0);
       });
