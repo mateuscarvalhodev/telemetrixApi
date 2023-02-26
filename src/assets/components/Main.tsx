@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { Container, List } from "./styles";
 
-export function Main () {
+export function Main() {
 
-  
+
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
-  const [ products, setProducts ] = useState<IProducts[]>([]);
+  const [products, setProducts] = useState<IProducts[]>([]);
   const [editingProduct, setEditingProduct] = useState<IProducts | null>(null);
 
-  
+
   useEffect(() => {
     api.get('').then((response) => {
       console.log(response.data);
@@ -26,6 +26,32 @@ export function Main () {
     })
   }, []);
 
+  const data =
+  {
+    "id": 0,
+    "categoryId": 0,
+    "description": "string",
+    "icmsTax": 0,
+    "ipiTax": 0,
+    "isAvailable": true,
+    "isWarehouse": true,
+    "minPuchaseQuantity": 0,
+    "name": "string",
+    "productCategory": {
+      "id": 0,
+      "allowAttachments": true,
+      "allowQuantityVariation": true,
+      "description": "string",
+      "hasShipping": true,
+      "limitRequest": 0,
+      "limitRequestsPerMonth": true,
+      "name": products,
+      "validateClient": true,
+      "valueVariation": 0,
+      "allowValueVariation": true
+    }
+  }
+  // api.post('', data) 
   interface IProducts {
     id?: number;
     name: string;
@@ -54,24 +80,35 @@ export function Main () {
       minPurchase: editingProduct?.minPurchase
     };
     const updatedProducts = products.map((product) => {
-      if(product.id === updatedProduct.id) {
+      if (product.id === updatedProduct.id) {
         return updatedProduct;
       }
       return product;
     });
     setProducts(updatedProducts);
   }
-    function handleSubmit (event: { preventDefault: () => void }) { 
+  function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
-    
-    const newProduct:IProducts = {
+
+    const newProduct: IProducts = {
       name: productName,
       price: productPrice,
     };
-    
-    setProducts([...products, newProduct])
-    setProductName('');
-    setProductPrice(0);
+
+    api.post('', newProduct)
+      .then((response) => {
+        const createdProduct: IProducts = {
+          id: response.data.id,
+          name: response.data.name,
+          price: response.data.price,
+          minPurchase: response.data.minPurchaseQuantity,
+        };
+        setProducts([...products, createdProduct])
+        setProductName('');
+        setProductPrice(0);
+      });
+
+
   }
 
 
@@ -82,54 +119,55 @@ export function Main () {
 
   return (
     <>
-    
-    <Container>
-      <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
-        <input 
-        type="text" 
-        value={productName}
-        onChange= {(event) => setProductName(event.target.value)} 
-        />
-        <input 
-        type="text"
-        value={productPrice}
-        onChange= {(event) => setProductPrice(parseFloat(event.target.value))}
-        />
-        {editingProduct ? (
-        <>
-          <button type="submit">Atualizar</button>
-          <button onClick={handleCancel}>Cancelar</button>
-        </>
-        ) : (
-          <button type="submit">Registrar</button>
-        )}
-        
 
-      </form>
-      <List>
-      <table>
-        <tr>
-          <th>PRODUTO</th>
-          <th>VENDE A PARTIR DE</th>
-          <th>PREÇO</th>
-        </tr>
+      <Container>
+        <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
+          <input
+            type="text"
+            value={productName}
+            onChange={(event) => setProductName(event.target.value)}
+          />
+          <input
+            type="text"
+            value={productPrice}
+            onChange={(event) => setProductPrice(parseFloat(event.target.value))}
+          />
+          {editingProduct ? (
+            <>
+              <button type="submit">Atualizar</button>
+              <button onClick={handleCancel}>Cancelar</button>
+            </>
+          ) : (
+            <button type="submit">Registrar</button>
+          )}
 
 
-  {products.map((product) => <tr>
-    <td>{product.name}</td>
-    <td>{product.minPurchase}</td>
-    <td>R$ {product.price}</td>
-    <td>
-      <button onClick={() => handleEdit(product)}>Editar</button>
-      <button onClick={() => handleDelete(product)}>Excluir</button>
-    </td>
-  </tr>
-  )}
- 
-  
-</table>
-      </List>
-    </Container>
+        </form>
+        <List>
+          <table>
+            <thead>
+              <tr>
+                <th>PRODUTO</th>
+                <th>VENDE A PARTIR DE</th>
+                <th>PREÇO</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {products.map((product) => <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.minPurchase}</td>
+                <td>R$ {product.price}</td>
+                <td>
+                  <button onClick={() => handleEdit(product)}>Editar</button>
+                  <button onClick={() => handleDelete(product)}>Excluir</button>
+                </td>
+              </tr>
+              )}
+            </tbody>
+          </table>
+        </List>
+      </Container>
     </>
   )
 }
