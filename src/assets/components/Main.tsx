@@ -24,8 +24,8 @@ export function Main () {
     }).catch((error) => {
       console.log(error);
     })
-  }, [])
-  
+  }, []);
+
   interface IProducts {
     id?: number;
     name: string;
@@ -45,20 +45,23 @@ export function Main () {
     setProductPrice(0);
   }
 
-  function handleUpdate(updatedProduct: IProducts) {
-    const updateProducts = products.map((product) => {
-      if (product.id === updatedProduct.id) {
+  function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const updatedProduct: IProducts = {
+      id: editingProduct?.id,
+      name: productName,
+      price: productPrice,
+      minPurchase: editingProduct?.minPurchase
+    };
+    const updatedProducts = products.map((product) => {
+      if(product.id === updatedProduct.id) {
         return updatedProduct;
       }
       return product;
     });
-    setProducts(updateProducts);
-    setEditingProduct(null);
-    setProductName('');
-    setProductPrice(0);
+    setProducts(updatedProducts);
   }
-// function handleSubmit (event: { preventDefault: () => void }) { 
-  function handleSubmit (event: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit (event: { preventDefault: () => void }) { 
     event.preventDefault();
     
     const newProduct:IProducts = {
