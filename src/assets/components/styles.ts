@@ -4,7 +4,7 @@ export const Container = styled.div`
 display: flex;
 flex-direction: column;
 width: 100vw;
-height: 100vh;
+/* height: 100vh; */
 justify-content: center;
 align-items: center;
 background: var(--color-secondary);
@@ -13,11 +13,9 @@ button {
 	background: var(--color-tertiary);
   border: 0;
   border-radius: 10px;
-  color: #fff;
+  color: var(--color-sucess);
   cursor: pointer;
-  display: inline-block;
   font-size: 14px;
-  position: relative;
   text-align: center;
   transition: all .3s;
   font-family: 'Montserrat', sans-serif;
@@ -45,7 +43,7 @@ button:hover {
 export const List = styled.div`
 display: flex;
 flex-direction: row;
-width: 90%;
+width: 100%;
 height: 200px;
 background: none;
 
@@ -59,7 +57,7 @@ background: none;
   }
 
 table {
-border-collapse: collapse;
+/* border-collapse: collapse; */
 margin: auto;
 }
 

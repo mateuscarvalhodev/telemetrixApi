@@ -23,11 +23,12 @@ export default createGlobalStyle`
 
   body, html {
     width: 100vw;
-    height: 100vh;
+    /* height: 100vh; */
     color: #FFF;
   }
   body {
-    background: linear-gradient(250deg, var(--color-secondary) -12%, var(--color-tertiary) 114%);
+    /* background: linear-gradient(250deg, var(--color-secondary) -12%, var(--color-tertiary) 114%); */
+    background: var(--color-secondary);
   }
 
   body, input, button, textarea {
