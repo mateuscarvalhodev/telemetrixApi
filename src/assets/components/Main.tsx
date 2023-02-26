@@ -118,11 +118,13 @@ export function Main() {
         <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
           <input
             type="text"
+            placeholder="Digite o nome do produto..."
             value={productName}
             onChange={(event) => setProductName(event.target.value)}
           />
           <input
             type="text"
+            placeholder="Preço do produto:"
             value={productPrice}
             onChange={(event) => setProductPrice(parseFloat(event.target.value))}
           />
@@ -144,6 +146,7 @@ export function Main() {
                 <th>PRODUTO</th>
                 <th>VENDE A PARTIR DE</th>
                 <th>PREÇO</th>
+                <th>EDIT/DELETE</th>
               </tr>
             </thead>
 
