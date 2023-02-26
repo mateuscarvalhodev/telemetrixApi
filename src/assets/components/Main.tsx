@@ -6,8 +6,10 @@ export function Main () {
 
   
   const [productName, setProductName] = useState('');
-  const [productPrice, setPrice] = useState<number>(0);
+  const [productPrice, setProductPrice] = useState<number>(0);
   const [ products, setProducts ] = useState<IProducts[]>([]);
+  const [editingProduct, setEditingProduct] = useState<IProducts | null>(null);
+
   
   useEffect(() => {
     api.get('').then((response) => {
@@ -16,6 +18,7 @@ export function Main () {
         id: product.id,
         name: product.name,
         price: product.price,
+        minPurchase: product.minPuchaseQuantity
       }));
       setProducts(apiProducts);
     }).catch((error) => {
@@ -23,17 +26,40 @@ export function Main () {
     })
   }, [])
   
-interface IProducts {
-  id?: number;
-  name: string;
-  price: number;
-}
+  interface IProducts {
+    id?: number;
+    name: string;
+    price: number;
+    minPurchase?: number;
+  }
 
-  function handleSubmit (event: { preventDefault: () => void; }) {
+  function handleEdit(product: IProducts) {
+    setEditingProduct(product);
+    setProductName(product.name);
+    setProductPrice(product.price);
+  }
+
+  function handleCancel() {
+    setEditingProduct(null);
+    setProductName('');
+    setProductPrice(0);
+  }
+
+  function handleUpdate(updatedProduct: IProducts) {
+    const updateProducts = products.map((product) => {
+      if (product.id === updatedProduct.id) {
+        return updatedProduct;
+      }
+      return product;
+    });
+    setProducts(updateProducts);
+    setEditingProduct(null);
+    setProductName('');
+    setProductPrice(0);
+  }
+// function handleSubmit (event: { preventDefault: () => void }) { 
+  function handleSubmit (event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    
-    
-    console.log(productName, productPrice)
     
     const newProduct:IProducts = {
       name: productName,
@@ -41,36 +67,59 @@ interface IProducts {
     };
     
     setProducts([...products, newProduct])
+    setProductName('');
+    setProductPrice(0);
+  }
+
+
+  function handleDelete(product: IProducts): void {
+    const updatedProducts = products.filter(p => p.id !== product.id);
+    setProducts(updatedProducts);
   }
 
   return (
     <>
     
     <Container>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
         <input 
         type="text" 
+        value={productName}
         onChange= {(event) => setProductName(event.target.value)} 
         />
         <input 
         type="text"
-        onChange= {(event) => setPrice(parseFloat(event.target.value))}
+        value={productPrice}
+        onChange= {(event) => setProductPrice(parseFloat(event.target.value))}
         />
-        <button type="submit">Registrar</button>
+        {editingProduct ? (
+        <>
+          <button type="submit">Atualizar</button>
+          <button onClick={handleCancel}>Cancelar</button>
+        </>
+        ) : (
+          <button type="submit">Registrar</button>
+        )}
+        
+
       </form>
       <List>
       <table>
-  <tr>
-    <th>PRODUTO</th>
-    <th>DISPONIBILIDADE</th>
-    <th>PREÇO</th>
-  </tr>
+        <tr>
+          <th>PRODUTO</th>
+          <th>VENDE A PARTIR DE</th>
+          <th>PREÇO</th>
+        </tr>
 
 
   {products.map((product) => <tr>
     <td>{product.name}</td>
-    <td>SIM</td>
+    <td>{product.minPurchase}</td>
     <td>R$ {product.price}</td>
+    <td>
+      <button onClick={() => handleEdit(product)}>Editar</button>
+      <button onClick={() => handleDelete(product)}>Excluir</button>
+    </td>
   </tr>
   )}
  
