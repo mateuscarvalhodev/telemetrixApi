@@ -58,7 +58,7 @@ button:hover {
 
 export const List = styled.div`
 display: flex;
-flex-direction: row;
+flex-direction: column;
 width: 100%;
 height: 200px;
 background: none;
@@ -96,5 +96,15 @@ background-color: rgba(0, 0, 0, 0.1);
 color: #fff;
 }
 
-
+.pages {
+  display: flex;
+  height: 50px;
+  /* border: 1px solid red; */
+  gap: 20px;
+}
+.pageNumber {
+  display: flex;
+  color: red;
+  align-items: center;
+}
 `;
