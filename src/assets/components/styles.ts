@@ -4,10 +4,26 @@ export const Container = styled.div`
 display: flex;
 flex-direction: column;
 width: 100vw;
-/* height: 100vh; */
+
 justify-content: center;
 align-items: center;
 background: var(--color-secondary);
+
+form {
+  
+  width: 100%;
+}
+/* form {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.9);
+} */
 
 button {
 	background: var(--color-tertiary);
@@ -17,7 +33,6 @@ button {
   cursor: pointer;
   font-size: 14px;
   text-align: center;
-  transition: all .3s;
   font-family: 'Montserrat', sans-serif;
   
   height: 50px;
@@ -26,9 +41,10 @@ button {
 }
 
 input {
+  background: #FFFFFF;
   height: 50px;
   width: 200px;
-  border: transparent;
+  border:2px solid var(--color-secondary);
   border-radius: 10px;
   margin: 5px;
   padding: 10px;
@@ -57,12 +73,11 @@ background: none;
   }
 
 table {
-/* border-collapse: collapse; */
+border-collapse: collapse;
 margin: auto;
 }
 
 th, td{
-padding: 10px;
 text-align: center;
 width: 320px;
 }
@@ -80,7 +95,6 @@ tr:hover:nth-child(1n + 2) {
 background-color: rgba(0, 0, 0, 0.1);
 color: #fff;
 }
-
 
 
 `;

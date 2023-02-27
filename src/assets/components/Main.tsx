@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { Container, List } from "./styles";
+import Modal from 'react-modal';
 
 export function Main() {
 
@@ -9,6 +10,7 @@ export function Main() {
   const [productPrice, setProductPrice] = useState<number>(0);
   const [products, setProducts] = useState<IProducts[]>([]);
   const [editingProduct, setEditingProduct] = useState<IProducts | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export function Main() {
     }).catch((error) => {
       console.log(error);
     })
-  }, []); 
+  }, []);
   interface IProducts {
     id?: number;
     name: string;
@@ -64,10 +66,11 @@ export function Main() {
     event.preventDefault();
 
     const newProduct: IProducts = {
+      id: products.length + 1,
       name: productName,
       price: productPrice,
     };
-    
+
     const data = {
       "id": 0,
       "categoryId": 0,
@@ -94,13 +97,14 @@ export function Main() {
     }
 
     const apiPost = api.post('', data)
-      apiPost.then((response) => {
-        console.log(response);
+    apiPost.then((response) => {
+      console.log(response);
 
-        setProducts([...products, newProduct])
-        setProductName('');
-        setProductPrice(0);
-      });
+      setProducts([...products, newProduct])
+      setProductName('');
+      setProductPrice(0);
+      setShowModal(false);
+    });
 
 
   }
@@ -113,32 +117,39 @@ export function Main() {
 
   return (
     <>
-
       <Container>
-        <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
-          <input
-            type="text"
-            placeholder="Digite o nome do produto..."
-            value={productName}
-            onChange={(event) => setProductName(event.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Preço do produto:"
-            value={productPrice}
-            onChange={(event) => setProductPrice(parseFloat(event.target.value))}
-          />
-          {editingProduct ? (
-            <>
-              <button type="submit">Atualizar</button>
-              <button onClick={handleCancel}>Cancelar</button>
-            </>
-          ) : (
-            <button type="submit">Registrar</button>
-          )}
+        <button onClick={() => setShowModal(showModal => !showModal)}>Adicionar Produto</button>
+        {showModal && (
+          <div className="modalContent">
+
+            <form onSubmit={editingProduct ? handleUpdate : handleSubmit}>
+              <input
+                type="text"
+                placeholder="Digite o nome do produto..."
+                value={productName}
+                onChange={(event) => setProductName(event.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Preço do produto:"
+                value={productPrice}
+                onChange={(event) => setProductPrice(parseFloat(event.target.value))}
+              />
+              {editingProduct ? (
+                <>
+                  <button type="submit">Atualizar</button>
+                  <button onClick={handleCancel}>Cancelar</button>
+                </>
+              ) : (
+                <button type="submit">Registrar</button>
+              )}
 
 
-        </form>
+            </form>
+
+          </div>
+        )}
+
         <List>
           <table>
             <thead>
