@@ -103,6 +103,6 @@ color: #fff;
   gap: 20px;
 }
 .pagination {
-  color: red;
+  
 }
 `;
