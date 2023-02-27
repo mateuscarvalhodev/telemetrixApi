@@ -102,9 +102,7 @@ color: #fff;
   /* border: 1px solid red; */
   gap: 20px;
 }
-.pageNumber {
-  display: flex;
+.pagination {
   color: red;
-  align-items: center;
 }
 `;

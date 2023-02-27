@@ -154,16 +154,17 @@ export function Main() {
   const renderPageNumbers = () => {
     const pageNumbers = [];
     for(let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <a key = {1}
-        onClick={() => handleClick(i)}
-        className={i === currentPage ? 'active' : ''}
-        >
-          {i}
-        </a>
-      );
+      pageNumbers.push(i);
     }
-    return <ul>{pageNumbers}</ul>;
+    return (
+      <div className="pagination">
+        {pageNumbers.map(number => (
+          <button key={number} className={currentPage === number ? 'active' : ''}>
+            <a onClick={() => handleClick(number)}>{number}</a>
+          </button>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -224,6 +225,7 @@ export function Main() {
           </table>
           <div className="pages">
           
+        {renderPageNumbers()}
           
           </div>
         </List>
