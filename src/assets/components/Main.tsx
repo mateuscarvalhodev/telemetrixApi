@@ -1,4 +1,4 @@
-import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { Container, List } from "./styles";
 // import Modal from 'react-modal';
@@ -6,13 +6,16 @@ import { Container, List } from "./styles";
 export function Main() {
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
+  const [productCategory, setProductCategory] = useState(0);
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
   const [products, setProducts] = useState<IProducts[]>([]);
   const [editingProduct, setEditingProduct] = useState<IProducts | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+
 
   const data = {
     "id": 0,
@@ -39,36 +42,50 @@ export function Main() {
     }
   }
 
-  const pageSize = 6;
+  const pageSize = 40;
+
+  function getProducts () {
+    try {
+      api.get('').then((response) => {
+        console.log(response.data);
+        const apiProducts: IProducts[] = response.data.map((product: any) => ({
+          // categoryId: product.categoryId,
+          category: product.category,
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          minPurchase: product.minPuchaseQuantity
+        }));
+  
+        setTotalPages(Math.ceil(apiProducts.length / pageSize));
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const apiProductsSlice = apiProducts.slice(startIndex, endIndex);
+        setProducts(apiProductsSlice);
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
-    api.get('').then((response) => {
-      const apiProducts: IProducts[] = response.data.map((product: any) => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        minPurchase: product.minPuchaseQuantity
-      }));
-
-      setTotalPages(Math.ceil(apiProducts.length / pageSize));
-      const startIndex = (currentPage - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      const apiProductsSlice = apiProducts.slice(startIndex, endIndex);
-      setProducts(apiProductsSlice);
-    });
+    getProducts()
   }, []);
   interface IProducts {
     id?: number;
     name: string;
     price: number;
     minPurchase?: number;
-  }
+    productCategory?: string;
+  };
+
+ 
 
   function handleEdit(product: IProducts) {
     setEditingProduct(product);
     setProductName(product.name);
     setProductPrice(product.price);
-  }
+  };
 
   function handleCancel() {
     setEditingProduct(null);
@@ -77,6 +94,7 @@ export function Main() {
   }
   const handleClick = (page : number) => {
     setCurrentPage(page)
+    location.reload();
   }
 
   function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
@@ -112,7 +130,7 @@ export function Main() {
     const data = {
       "id": 0,
       "categoryId": 0,
-      "description": "string",
+      "description": productName,
       "icmsTax": 0,
       "ipiTax": 0,
       "isAvailable": true,
@@ -133,13 +151,17 @@ export function Main() {
         "allowValueVariation": true
       }
     };
+    try {
+      api.post('', data)
+      console.log(data)
+    
+      setProducts([...products, newProduct]);
+      setProductName('');
+            
+    } catch (error) {
+      console.log(error)
+    }
 
-    api.post('', data)
-    window.location.reload();
-  
-    setProducts([...products, newProduct]);
-    setProductName('');
-    setProductPrice(0);
   };
 
 
@@ -179,12 +201,19 @@ export function Main() {
                 value={productName}
                 onChange={(event) => setProductName(event.target.value)}
               />
-              <input
-                type="text"
-                placeholder="Preço do produto:"
-                value={productPrice}
-                onChange={(event) => setProductPrice(parseFloat(event.target.value))}
-              />
+
+              <select                
+                placeholder="Categoria:"
+                
+                value={productCategory}
+                onChange={(event) => setProducts(event.target.value)}
+                >
+                  <option value='null'>SELECIONE A CATEGORIA</option>
+                  <option value="eletronico">Eletronico</option>
+                  <option value="moveis">moveis</option>
+                </select>
+                
+              
               {editingProduct ? (
                 <>
                   <button type="submit">Atualizar</button>
@@ -203,7 +232,7 @@ export function Main() {
               <tr>
                 <th>PRODUTO</th>
                 <th>VENDE A PARTIR DE</th>
-                <th>PREÇO</th>
+                <th>CATEGORIA</th>
                 <th>EDIT/DELETE</th>
               </tr>
             </thead>
@@ -212,7 +241,7 @@ export function Main() {
                 <tr key={product.id}>
                 <td>{product.name}</td>
                 <td>{product.minPurchase}</td>
-                <td>R$ {product.price}</td>
+                <td>{product.id}</td>
                 <td>
                   <button onClick={() => handleEdit(product)}>Editar</button>
                   <button onClick={() => handleDelete(product)}>Excluir</button>
@@ -221,14 +250,13 @@ export function Main() {
               )}
             </tbody>
           </table>
-          <div className="pages">
           
-        {renderPageNumbers()}
           
-          </div>
+        {/* {renderPageNumbers()} */}
+          
+          
         </List>
       </Container>
     </>
   )
-}
-{/* <div className="pageNumber">{renderPageNumbers()}</div> */}
+};

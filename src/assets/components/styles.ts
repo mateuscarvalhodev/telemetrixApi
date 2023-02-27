@@ -40,7 +40,7 @@ button {
   margin: 10px;
 }
 
-input {
+input, select {
   background: #FFFFFF;
   height: 50px;
   width: 200px;
