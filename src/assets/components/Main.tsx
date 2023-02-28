@@ -42,11 +42,11 @@ export function Main() {
     }
   }
 
-  const pageSize = 40;
+  const pageSize = 6;
 
-  function getProducts () {
+  async function getProducts () {
     try {
-      api.get('').then((response) => {
+      const response = await api.get('').then((response) => {
         console.log(response.data);
         const apiProducts: IProducts[] = response.data.map((product: any) => ({
           // categoryId: product.categoryId,
@@ -79,8 +79,6 @@ export function Main() {
     productCategory?: string;
   };
 
- 
-
   function handleEdit(product: IProducts) {
     setEditingProduct(product);
     setProductName(product.name);
@@ -94,10 +92,13 @@ export function Main() {
   }
   const handleClick = (page : number) => {
     setCurrentPage(page)
-    location.reload();
   }
+  
+  useEffect(() => {
+    getProducts();
+  }, [currentPage]);
 
-  function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
+  async function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const updatedProduct: IProducts = {
       id: editingProduct?.id,
@@ -107,17 +108,28 @@ export function Main() {
     };
 
     const updatedProducts = products.map((product) => {
-
       if (product.id === updatedProduct.id) {
-        data['name'] = productName;
-        api.put('' + product.id, data);
+        const updatedData = {
+          ...data,
+          name: productName,
+        };
+        api.put('' + product.id, updatedData).then(() => {
+          const updatedProducts: any = products.map((p) => {
+            if(p.id === updatedProduct.id) {
+              return updatedProducts
+            }
+            return p;
+          });
+          setProducts(updatedProducts);
+        })
+        // data['name'] = productName;
         return updatedProduct;
       }
-
       return product;
     });
     setProducts(updatedProducts);
-  }
+  };
+  
   function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
 
@@ -252,7 +264,7 @@ export function Main() {
           </table>
           
           
-        {/* {renderPageNumbers()} */}
+        {renderPageNumbers()}
           
           
         </List>
